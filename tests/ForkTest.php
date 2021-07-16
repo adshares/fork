@@ -23,8 +23,8 @@ class ForkTest extends TestCase
     {
         $results = Fork::new()
             ->run(
-                fn () => 1 + 1,
-                fn () => 2 + 2,
+                function () { return 1 + 1; },
+                function () { return 2 + 2; },
             );
 
         $this->assertEquals([2, 4], $results);
@@ -63,9 +63,9 @@ class ForkTest extends TestCase
         Fork::new()
             ->run(
                 ...array_fill(
-                    start_index: 0,
-                    count: 20,
-                    value: fn () => usleep(100_000),
+                    0,
+                    20,
+                       function () { usleep(100_000); },
                 ) // 1/10th of a second each
             );
 
@@ -118,10 +118,10 @@ class ForkTest extends TestCase
         $value = 0;
 
         Fork::new()
-            ->before(parent: function () use (&$value) {
+            ->before(null, function () use (&$value) {
                 $value++;
             })
-            ->run(fn () => 1, fn () => 2);
+            ->run(function () { return 1; }, function () { return 2; });
 
         $this->assertEquals(2, $value);
     }
@@ -132,10 +132,10 @@ class ForkTest extends TestCase
         $value = 0;
 
         Fork::new()
-            ->after(parent: function () use (&$value) {
+            ->after(null, function () use (&$value) {
                 $value++;
             })
-            ->run(fn () => 1, fn () => 2);
+            ->run(function () { return 1; }, function () { return 2; });
 
         $this->assertEquals(2, $value);
     }
@@ -145,9 +145,9 @@ class ForkTest extends TestCase
     {
         $result = Fork::new()
             ->run(
-                fn () => file_get_contents('https://stitcher.io/rss'),
-                fn () => file_get_contents('https://sebastiandedeyne.com/index.xml'),
-                fn () => file_get_contents('https://rubenvanassche.com/rss/'),
+                function () { return file_get_contents('https://stitcher.io/rss'); },
+                function () { return file_get_contents('https://sebastiandedeyne.com/index.xml'); },
+                function () { return file_get_contents('https://rubenvanassche.com/rss/'); },
             );
 
         $this->assertCount(3, $result);
@@ -158,8 +158,8 @@ class ForkTest extends TestCase
     {
         $result = Fork::new()
             ->run(
-                fn () => new DateTime('2021-01-01'),
-                fn () => new DateTime('2021-01-02'),
+                function () { return new DateTime('2021-01-01'); },
+                function () { return new DateTime('2021-01-02'); },
             );
 
         $this->assertEquals('2021-01-01', $result[0]->format('Y-m-d'));
@@ -171,12 +171,13 @@ class ForkTest extends TestCase
     {
         Fork::new()
             ->after(
-                parent: function (int $i) {
+                null,
+                function (int $i) {
                     $this->assertEquals(1, $i);
                 },
             )
             ->run(
-                fn () => 1
+                function () { return 1; }
             );
     }
 

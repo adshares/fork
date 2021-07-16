@@ -3,15 +3,21 @@
 namespace Spatie\Fork;
 
 use Generator;
-use Socket;
 
 class Connection
 {
+    protected $socket;
+    protected int $bufferSize;
+    protected float $timeout;
+
     protected function __construct(
-        protected Socket $socket,
-        protected int $bufferSize = 1024,
-        protected float $timeout = 0.1,
+        $socket,
+        int $bufferSize = 1024,
+        float $timeout = 0.1
     ) {
+        $this->socket = $socket;
+        $this->bufferSize = $bufferSize;
+        $this->timeout = $timeout;
         socket_set_nonblock($this->socket);
     }
 

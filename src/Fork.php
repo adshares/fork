@@ -103,7 +103,7 @@ class Fork
         return $this->forkForTask($task);
     }
 
-    protected function finishTask(Task $task): mixed
+    protected function finishTask(Task $task)
     {
         $output = $task->output();
 
@@ -145,7 +145,7 @@ class Fork
 
     protected function executeInChildTask(
         Task $task,
-        Connection $connectionToParent,
+        Connection $connectionToParent
     ): void {
         if ($this->toExecuteBeforeInChildTask) {
             ($this->toExecuteBeforeInChildTask)();
