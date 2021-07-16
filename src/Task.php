@@ -130,14 +130,13 @@ class Task
     {
         $this->output .= $this->connection->read()->current();
 
-        $status = pcntl_waitpid($this->pid(), $status, WNOHANG | WUNTRACED);
+        $pid = pcntl_waitpid($this->pid(), $status, WNOHANG | WUNTRACED);
 
-        if ($status === $this->pid) {
+        if ($pid === $this->pid) {
+            if ($status !== 0) {
+                throw CouldNotManageTask::make($this);
+            }
             return true;
-        }
-
-        if ($status !== 0) {
-            throw CouldNotManageTask::make($this);
         }
 
         return false;
